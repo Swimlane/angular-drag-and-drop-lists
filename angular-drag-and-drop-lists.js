@@ -69,7 +69,7 @@ angular.module('dndLists', [])
   .directive('dndDraggable', ['$parse', '$timeout', 'dndDropEffectWorkaround', 'dndDragTypeWorkaround', '$window',
                       function($parse,   $timeout,   dndDropEffectWorkaround,   dndDragTypeWorkaround,   $window) {
     return function(scope, element, attr) {
-      $window.Zone.current.parent.run(function() {
+      var fn = function() {
         // Set the HTML5 draggable attribute on the element
         element.attr("draggable", "true");
 
@@ -176,7 +176,13 @@ angular.module('dndLists', [])
         element.on('selectstart', function() {
           if (this.dragDrop) this.dragDrop();
         });
-      });
+      };
+
+      if ($window.Zone.current.parent) {
+        $window.Zone.current.parent.run(fn);
+      } else {
+        fn();
+      }
     }
   }])
 
@@ -243,7 +249,7 @@ angular.module('dndLists', [])
   .directive('dndList', ['$parse', '$timeout', 'dndDropEffectWorkaround', 'dndDragTypeWorkaround', '$window',
                  function($parse,   $timeout,   dndDropEffectWorkaround,   dndDragTypeWorkaround,   $window) {
     return function(scope, element, attr) {
-      $window.Zone.current.parent.run(function() {
+      var fn = function() {
         // While an element is dragged over the list, this placeholder element is inserted
         // at the location where the element would be inserted after dropping
         var placeholder = getPlaceholderElement();
@@ -512,7 +518,13 @@ angular.module('dndLists', [])
 
           return false;
         }
-      });
+      }
+
+      if ($window.Zone.current.parent) {
+        $window.Zone.current.parent.run(fn);
+      } else {
+        fn();
+      }
 
     }
   }])
